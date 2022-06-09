@@ -245,6 +245,8 @@
 
     <script>
 
+        var conversationId = 0;
+
         var htmlContent = '<div id="body">       ' +
             '                   <div id="chat-circle" class="btn btn-raised">' +
             '                       <div id="chat-overlay"></div>  ' +
@@ -285,7 +287,7 @@
             $(".chat-box").toggle('scale');
         })
 
-        var conversationId = 0;
+
 
         $("#chat-submit").click(function(e) {
             e.preventDefault();
@@ -313,6 +315,7 @@
                 contentType: "application/json",
                 success : function (data) {
                     console.log(data);
+                    conversationId = data.convId;
                     generate_message( data.data , "user" );
                 }
             });

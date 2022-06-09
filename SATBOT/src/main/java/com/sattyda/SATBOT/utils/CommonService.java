@@ -2,6 +2,7 @@ package com.sattyda.SATBOT.utils;
 
 import com.sattyda.SATBOT.entities.Conversation;
 import com.sattyda.SATBOT.entities.Message;
+import com.sattyda.SATBOT.entities.QnA;
 import com.sattyda.SATBOT.repos.ChatRepo;
 import com.sattyda.SATBOT.repos.ConvRepo;
 import com.sattyda.SATBOT.repos.QRepo;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CommonService {
@@ -43,5 +45,17 @@ public class CommonService {
         message.setOwner(owner);
         message.setConversation(index);
         chatRepo.save(message);
+    }
+
+    public String isInQnA(String message) {
+
+        List<QnA> qnAList =  qRepo.findAllByQuestion(message);
+
+        if(qnAList.isEmpty()){
+            return "Sorry! Couldnt help this moment. Try something else....";
+        } else {
+            return qnAList.get(0).getAnswer();
+        }
+
     }
 }

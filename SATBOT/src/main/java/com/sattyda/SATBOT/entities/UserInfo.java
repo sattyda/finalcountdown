@@ -11,13 +11,21 @@ import javax.persistence.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class UserInfo {
+
+
+
     @Id
     String email;
 
+    String department;
+
+    String mobile;
+
+    String faculty;
+
     String name;
 
-    String role;
+    String type;
 
-    Boolean enabled = true;
 }
