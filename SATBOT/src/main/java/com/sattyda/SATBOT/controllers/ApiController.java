@@ -82,8 +82,6 @@ public class ApiController {
         return qna;
     }
 
-
-
     @ResponseBody
     @RequestMapping(value = "/admin/conversations" , method = RequestMethod.POST)
     public ResponseEntity<List<Conversation>> conversations(){
