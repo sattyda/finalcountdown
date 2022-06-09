@@ -23,4 +23,6 @@ public class QnA {
     String answer;
 
     String keywords;
+
+    String category;
 }

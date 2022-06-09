@@ -17,7 +17,17 @@ public class User {
 
     String name;
 
+    String password;
+
     String role;
 
     Boolean enabled = true;
+
+    String department;
+
+    String mobile;
+
+    String faculty;
+
+    String type;
 }

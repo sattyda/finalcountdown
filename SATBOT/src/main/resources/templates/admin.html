@@ -15,6 +15,19 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/js/bootstrap.min.js'></script>
 
 
+    <style>
+        .conv-box{
+            border: 1px solid greenyellow;
+            border-radius: 12px;
+            margin: 5px;
+            width: 100%;
+            padding: 3px;
+        }
+
+        .myactive {
+            background-color: #cccccc;
+        }
+    </style>
 
     <style>
 
@@ -239,81 +252,75 @@
         }
 
     </style>
-
 </head>
 <body style="text-align: center">
-    <h1> Welcome to SatBot </h1>
-    <h3>Most Advanced Bot Developed by SattyDa</h3>
+    <h3>Admin PANEL</h3>
+    <div class="row">
+        <div class="col-3">
+            <h4>Conversations: </h4>
+            <div id="conv-list"></div>
+        </div>
+
+        <div class="col-7">
+            <h4>Chat List: </h4>
+            <div id="chat-list"></div>
+        </div>
+
+    </div>
+
 
     <script>
 
-        var conversationId = 0;
+        var token = $("#_csrf").attr("content");
+        var header = $("#_csrf_header").attr("content");
 
-        var htmlContent = '<div id="body">       ' +
-            '                   <div id="chat-circle" class="btn btn-raised">' +
-            '                       <div id="chat-overlay"></div>  ' +
-            '                       <i class="material-icons">speaker_phone</i>     ' +
-            '                   </div>' +
-            '                   <div class="chat-box">       ' +
-            '                       <div class="chat-box-header">' +
-            '                           SATBOT<span class="chat-box-toggle"><i class="material-icons">close</i></span>       ' +
-            '                       </div>' +
-                '                   <div class="chat-box-body">         ' +
-                '                       <div class="chat-box-overlay">            ' +
-                '                       </div>         ' +
-                '                       <div class="chat-logs">  ' +
-                '                       </div>' +
-                '                   </div> ' +
-                '                   <div class="chat-input">    ' +
-                    '                   <form onsubmit="return false">  ' +
-                    '                       <input type="text" id="chat-input" placeholder="Send a message..."/>      ' +
-                    '                       <button type="button" class="chat-submit" id="chat-submit">' +
-                    '                           <i class="material-icons">send</i>' +
-                    '                       </button>        ' +
-                    '                   </form>  ' +
-                '                   </div>     ' +
-            '                   </div>' +
-            '              </div>';
+        var checker =true;
 
-        $("body").append(htmlContent);
+        $.ajax({
+            url : "/admin/conversations",
+            data : JSON.stringify({ }),
+            beforeSend: function (xhr){
+                xhr.setRequestHeader(header , token)
+            },
+            cache : false,
+            type : 'post',
+            dataType : 'json',
+            contentType: "application/json",
+            success : function (data) {
+                $(data).each(function (ind , val){
+                    create_conversation( val );
+                    if(checker){
+                        checker  = false;
+                        create_chats(val.id);
+                    }
+                })
 
+                $(".conv-box").click(function (){
+                    $("#chat-list").html("");
+                    create_chats($(this).data('id'));
 
-
-        $("#chat-circle").click(function() {
-            $("#chat-circle").toggle('scale');
-            $(".chat-box").toggle('scale');
-        })
-
-        $(".chat-box-toggle").click(function() {
-            $("#chat-circle").toggle('scale');
-            $(".chat-box").toggle('scale');
-        })
-
-
-
-        $("#chat-submit").click(function(e) {
-            e.preventDefault();
-            var msg = $("#chat-input").val();
-            if(msg.trim() == ''){
-                return false;
+                    $(".conv-box").removeClass("myactive");
+                    $(this).addClass("myactive");
+                });
             }
-            generate_message(msg, 'self');
-            // generate_message("this is good", 'user');
+        });
 
-            chatbot( conversationId , msg)
+        function create_conversation(val){
+            console.log(val);
 
-        })
+            var box = '<div class="conv-box" data-id="'+ val.id +'" >' +
+                'Id : <b>'+ val.id +'</b><br/>' +
+                'User : <b>'+ val.user +'</b><br/>' +
+                'Start Time : <b>'+ val.starttime +'</b><br/>' +
+                '</div>'
 
+            $("#conv-list").append( box );
+        }
 
-        function chatbot(ind, msg){
-            msg = msg.trim().toLowerCase();
-
-            var token = $("#_csrf").attr("content");
-            var header = $("#_csrf_header").attr("content");
-
+        function create_chats(id){
             $.ajax({
-                url : "/api/hello",
-                data : JSON.stringify({ "message": msg , "index" : ind }),
+                url : "/admin/messages",
+                data : JSON.stringify({ 'id' : id }),
                 beforeSend: function (xhr){
                     xhr.setRequestHeader(header , token)
                 },
@@ -322,127 +329,38 @@
                 dataType : 'json',
                 contentType: "application/json",
                 success : function (data) {
-                    console.log(data);
-                    conversationId = data.convId;
-                    generate_message( data.data , "user" );
+                    $(data).each(function (ind , val){
+                        console.log(val);
+                        generate_message(val)
+
+                    })
                 }
             });
         }
 
-        function generate_message(msg, type) {
 
+        function generate_message(val) {
+
+            var userType =  "self";
             var icon = "/user.jpg";
-            if(type === 'user'){
+            if(val.owner === 'bot'){
                 icon = "/bot.png";
+                userType = "user";
             }
-
             var str="";
-            str += "<div id='cm-msg-"+conversationId+"' class=\"chat-msg "+type+"\">";
+            str += "<div class=\"chat-msg "+ userType +"\">";
             str += "          <span class=\"msg-avatar\">";
             str += "            <img src=\""+ icon +"\">";
             str += "          <\/span>";
             str += "          <div class=\"cm-msg-text\">";
-            str += msg;
+            str += val.message;
             str += "          <\/div>";
+            str += val.time ;
             str += "        <\/div>";
-            $(".chat-logs").append(str);
-            // $("#cm-msg-"+conversationId).hide().fadeIn(1000);
-            if(type == 'self'){
-                $("#chat-input").val('');
-            }
+            $("#chat-list").append(str);
 
-            $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);
+            $("#chat-list").stop().animate({ scrollTop: $("#chat-list")[0].scrollHeight}, 1000);
         }
-
-        function generate_button_message(msg, buttons){
-
-            var icon = chatter.botImage;
-
-            /* Buttons should be object array
-              [
-                {
-                  name: 'Existing User',
-                  value: 'existing'
-                },
-                {
-                  name: 'New User',
-                  value: 'new'
-                }
-              ]
-            */
-            INDEX++;
-            var btn_obj = buttons.map(function(button) {
-                return  "              <li class=\"button\"><a href=\"javascript:;\" class=\"btn btn-primary chat-btn\" chat-value=\""+button.value+"\">"+button.name+"<\/a><\/li>";
-            }).join('');
-            var str="";
-            str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg user\">";
-            str += "          <span class=\"msg-avatar\">";
-            str += "            <img src=\""+ icon +"\">";
-            str += "          <\/span>";
-            str += "          <div class=\"cm-msg-text\">";
-            str += msg;
-            str += "          <\/div>";
-            str += "          <div class=\"cm-msg-button\">";
-            str += "            <ul>";
-            str += btn_obj;
-            str += "            <\/ul>";
-            str += "          <\/div>";
-            str += "        <\/div>";
-            $(".chat-logs").append(str);
-            $("#cm-msg-"+INDEX).hide().fadeIn(300);
-            $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);
-            $("#chat-input").attr("disabled", true);
-        }
-
-
-        function generate_questions_message(msg, buttons){
-
-            var icon = chatter.botImage;
-
-            /* Buttons should be object array
-              [
-                {
-                  name: 'Existing User',
-                  value: 'existing'
-                },
-                {
-                  name: 'New User',
-                  value: 'new'
-                }
-              ]
-            */
-            INDEX++;
-            var btn_obj = buttons.map(function(button) {
-                return  "              <li class=\"question\"><a href=\"javascript:;\" class=\"btn btn-primary chat-btn\" chat-value=\""+button.value+"\">"+button.name+"<\/a><\/li>";
-            }).join('');
-            var str="";
-            str += "<div id='cm-msg-"+INDEX+"' class=\"chat-msg user\">";
-            str += "          <span class=\"msg-avatar\">";
-            str += "            <img src=\""+ icon +"\">";
-            str += "          <\/span>";
-            str += "          <div class=\"cm-msg-text\">";
-            str += msg;
-            str += "          <\/div>";
-            str += "          <div class=\"cm-msg-button\">";
-            str += "            <ul>";
-            str += btn_obj;
-            str += "            <\/ul>";
-            str += "          <\/div>";
-            str += "        <\/div>";
-            $(".chat-logs").append(str);
-            $("#cm-msg-"+INDEX).hide().fadeIn(300);
-            $(".chat-logs").stop().animate({ scrollTop: $(".chat-logs")[0].scrollHeight}, 1000);
-            $("#chat-input").attr("disabled", true);
-        }
-
-        $(document).delegate(".chat-btn", "click", function() {
-            var value = $(this).attr("chat-value");
-            var name = $(this).html();
-            $("#chat-input").attr("disabled", false);
-            generate_message(name, 'self');
-            chatbot(INDEX, value);
-        })
     </script>
-
 </body>
 </html>

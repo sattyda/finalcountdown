@@ -19,10 +19,11 @@ public class SatbotApplication {
 
 	@Bean
 	public void addData(){
-//		qRepo.save(new QnA( null, "Campus Size" , "1200acres" , "Campus" ));
-//		qRepo.save(new QnA( null, "Campus Color" , "Green" , "Campus" ));
-//		qRepo.save(new QnA( null, "Number of Departments" , "10" , "Department" ));
-//		qRepo.save(new QnA( null, "Male Female Ratio" , "50:50" , "Ratio" ));
+		qRepo.save(new QnA( null, "Campus Size" , "1200acres" , "Campus" , "CAMPUS"));
+		qRepo.save(new QnA( null, "Campus Color" , "Green" , "Campus" , "CAMPUS" ));
+		qRepo.save(new QnA( null, "Number of Departments" , "10" , "Department" , "DEPARTMENTS" ));
+		qRepo.save(new QnA( null, "Male Female Ratio" , "50:50" , "Ratio" , "FUN" ));
+		qRepo.save(new QnA( null, "hi" , "Hello" , "Greeting" ,"GREETING" ));
 	}
 
 }

@@ -3,6 +3,7 @@ package com.sattyda.SATBOT.utils;
 import com.sattyda.SATBOT.entities.Conversation;
 import com.sattyda.SATBOT.entities.Message;
 import com.sattyda.SATBOT.entities.QnA;
+import com.sattyda.SATBOT.entities.User;
 import com.sattyda.SATBOT.repos.ChatRepo;
 import com.sattyda.SATBOT.repos.ConvRepo;
 import com.sattyda.SATBOT.repos.QRepo;
@@ -44,6 +45,7 @@ public class CommonService {
         message.setUser(user);
         message.setOwner(owner);
         message.setConversation(index);
+        message.setTime( new Date());
         chatRepo.save(message);
     }
 
@@ -57,5 +59,24 @@ public class CommonService {
             return qnAList.get(0).getAnswer();
         }
 
+    }
+
+    public void saveUser(User user) {
+        userRepo.save(user);
+
+    }
+
+    public User getUser(String username) {
+
+        return userRepo.findAllByEmail(username);
+
+    }
+
+    public List<Conversation> getConversations() {
+        return convRepo.findAll();
+    }
+
+    public List<Message> getMessages(Long id) {
+        return chatRepo.findAllByConversation(id);
     }
 }
