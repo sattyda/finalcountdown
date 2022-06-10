@@ -24,7 +24,7 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.httpBasic().and().authorizeRequests()
-                .antMatchers("/web/api/hello" , "/web/", "/web/register")
+                .antMatchers("/web/api/hello" , "/", "/web/register")
                 .permitAll()
                 .antMatchers("/web/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest()

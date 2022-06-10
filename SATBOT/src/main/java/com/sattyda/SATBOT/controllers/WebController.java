@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,7 +22,7 @@ public class WebController {
 
     BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
 
-    @RequestMapping(value = "/web/" , method = RequestMethod.GET)
+    @RequestMapping(value = "/" , method = RequestMethod.GET)
     public String index(){
 
         Authentication authetication = SecurityContextHolder.getContext().getAuthentication();
