@@ -27,7 +27,7 @@ public class ApiController {
     CommonService commonService;
 
     @ResponseBody
-    @RequestMapping(value = "/api/hello" , method = RequestMethod.POST)
+    @RequestMapping(value = "/web/api/hello" , method = RequestMethod.POST)
     public ResponseEntity<Response> hello(@RequestBody MessageBody messageBody){
         String user =  "anonymous";
 
@@ -83,14 +83,14 @@ public class ApiController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/admin/conversations" , method = RequestMethod.POST)
+    @RequestMapping(value = "/web/admin/conversations" , method = RequestMethod.POST)
     public ResponseEntity<List<Conversation>> conversations(){
         List<Conversation> response = commonService.getConversations();
         return new ResponseEntity<>( response , HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/admin/messages" , method = RequestMethod.POST)
+    @RequestMapping(value = "/web/admin/messages" , method = RequestMethod.POST)
     public ResponseEntity<List<Message>> messages(@RequestBody ChatInput chatInput){
         List<Message> response = commonService.getMessages( chatInput.getId() );
         return new ResponseEntity<>( response , HttpStatus.OK);

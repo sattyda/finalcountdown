@@ -73,11 +73,19 @@ public class CommonService {
 
     }
 
-    public List<Conversation> getConversations() {
+    public List<Conversation> getConversations(String username) {
+        return convRepo.findAllByUser(username);
+    }
+
+    public List<Message> getMessages(Long id , String user) {
+        return chatRepo.findAllByConversationAndUser(id , user);
+    }
+
+    public List<Conversation> getAdminConversations() {
         return convRepo.findAll();
     }
 
-    public List<Message> getMessages(Long id) {
-        return chatRepo.findAllByConversation(id);
+    public List<Message> getAdminMessages(Long id ) {
+        return chatRepo.findAllByConversation(id );
     }
 }

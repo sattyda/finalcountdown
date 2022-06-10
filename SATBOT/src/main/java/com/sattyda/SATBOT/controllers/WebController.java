@@ -21,31 +21,36 @@ public class WebController {
 
     BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
 
-    @RequestMapping(value = "/" , method = RequestMethod.GET)
+    @RequestMapping(value = "/web/" , method = RequestMethod.GET)
     public String index(){
 
         Authentication authetication = SecurityContextHolder.getContext().getAuthentication();
-        if(authetication != null && authetication.getPrincipal() instanceof UserDetails && ((UserDetails)authetication.getPrincipal()).getAuthorities().stream().anyMatch( a -> a.getAuthority().equals("ADMIN"))){
-            return "redirect:/admin";
+        if(authetication != null && authetication.getPrincipal() instanceof UserDetails && ((UserDetails)authetication.getPrincipal()).getAuthorities().stream().anyMatch( a -> a.getAuthority().equals("ROLE_ADMIN"))){
+            return "redirect:/web/admin";
         }
         return "index";
     }
 
+    @RequestMapping(value = "/web/login" , method = RequestMethod.GET)
+    public String login(){
+        return "login";
+    }
 
-    @RequestMapping(value = "/register" , method = RequestMethod.GET)
+
+    @RequestMapping(value = "/web/register" , method = RequestMethod.GET)
     public String register(){
         return "register";
     }
 
-    @RequestMapping(value = "/admin" , method = RequestMethod.GET)
+    @RequestMapping(value = "/web/admin" , method = RequestMethod.GET)
     public String admin(){
         return "admin";
     }
 
-    @RequestMapping(value = "/register" , method = RequestMethod.POST)
+    @RequestMapping(value = "/web/register" , method = RequestMethod.POST)
     public String save( User user ){
         user.setPassword( bCryptPasswordEncoder.encode( user.getPassword() ));
         commonService.saveUser( user );/////  ==== 5
-        return "redirect:/login";
+        return "redirect:/web/login";
     }
 }

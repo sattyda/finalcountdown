@@ -277,7 +277,7 @@
         var checker =true;
 
         $.ajax({
-            url : "/admin/conversations",
+            url : "/web/admin/conversations",
             data : JSON.stringify({ }),
             beforeSend: function (xhr){
                 xhr.setRequestHeader(header , token)
@@ -319,7 +319,7 @@
 
         function create_chats(id){
             $.ajax({
-                url : "/admin/messages",
+                url : "/web/admin/messages",
                 data : JSON.stringify({ 'id' : id }),
                 beforeSend: function (xhr){
                     xhr.setRequestHeader(header , token)

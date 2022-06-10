@@ -1,7 +1,9 @@
 package com.sattyda.SATBOT.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -22,20 +24,22 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.httpBasic().and().authorizeRequests()
-                .antMatchers("/api/hello" , "/", "/register")
+                .antMatchers("/web/api/hello" , "/web/", "/web/register")
                 .permitAll()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/web/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/", true)
+                .loginPage("/web/login")
+                .defaultSuccessUrl("/web/", true)
                 .permitAll()
                 .and()
                 .logout()
                 .invalidateHttpSession(true)
                 .logoutSuccessUrl("/")
                 .permitAll();
+        http.addFilter( new MyCustomLogin() );
     }
 
 //    @Override
@@ -51,6 +55,5 @@ public class MyWebSecurity extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery("SELECT email, password, enabled FROM user where email=?")
                 .authoritiesByUsernameQuery("SELECT email, role FROM user where email=?");
     }
-
 
 }

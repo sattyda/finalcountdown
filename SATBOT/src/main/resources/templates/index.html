@@ -312,7 +312,7 @@
             var header = $("#_csrf_header").attr("content");
 
             $.ajax({
-                url : "/api/hello",
+                url : "/web/api/hello",
                 data : JSON.stringify({ "message": msg , "index" : ind }),
                 beforeSend: function (xhr){
                     xhr.setRequestHeader(header , token)
